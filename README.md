@@ -19,5 +19,5 @@ Second week project
 
 ✓User can tap on any image in results to see the image full-screen
 
-[in progress] User can scroll down “infinitely” to continue loading more image results (up to 8 pages)
+✓ [with some errors] User can scroll down “infinitely” to continue loading more image results (up to 8 pages)
 
