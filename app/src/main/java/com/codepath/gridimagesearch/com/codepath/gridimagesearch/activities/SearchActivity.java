@@ -65,7 +65,7 @@ public class SearchActivity extends ActionBarActivity {
 
             @Override
             public  void onLoadMore(int page, int totalItemsCount) {
-                customLoadMoreDataFromApi(false);
+                customLoadMoreDataFromApi(true);
             }
         });
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -101,7 +101,7 @@ public class SearchActivity extends ActionBarActivity {
         AsyncHttpClient client = new AsyncHttpClient();
         //http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=android&rsz=8
         String searchUrl = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + query + "&rsz=8";
-        client.get(searchUrl, new JsonHttpResponseHandler(){
+        client.get(searchUrl, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers,
                                   JSONObject response) {
@@ -111,9 +111,56 @@ public class SearchActivity extends ActionBarActivity {
                     imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
                     imageResults.clear(); //clear the existig images in case there is a new search
                     // When you make to the adapter, it does modify the underliying data auto
-                    aImageResults.addAll(ImageResult.fromJSONAray(imageResultsJson));
+                    aImageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
                 } catch (JSONException e) {
                     //TODO catch block
+                    e.printStackTrace();
+                }
+                Log.i("INFO", imageResults.toString());
+            }
+        });
+    }
+
+    public void customLoadMoreDataFromApi(final boolean isPage) {
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
+        String query = etQuery.getText().toString();
+        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="+ query +"&rsz=8";
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(url, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.i("DEBUG", response.toString());
+                JSONArray imageResultsJson = null;
+                try {
+                    if (isPage) {
+                        Toast.makeText(getApplicationContext(), "Found Ya!", Toast.LENGTH_SHORT).show();
+                        imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
+                        aImageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
+                    }
+                    JSONObject cursor = response.getJSONObject("responseData").getJSONObject("cursor");
+                    int currentPage = cursor.getInt("currentPageIndex");
+                    JSONArray pages = cursor.getJSONArray("page");
+                    if ((pages.length() - 1) > currentPage) {
+                        JSONObject page = pages.getJSONObject(currentPage + 1);
+                        // searchOptions.start = page.getString("start");
+                    } else if (!isPage) {
+                        // stop searching once we have reached the end
+                        Toast.makeText(getApplicationContext(), "No more results for this search!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
+                    imageResults.clear();
+
+                    aImageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
+                    if (aImageResults.getCount() < 8) {
+                        customLoadMoreDataFromApi(false);
+                    }
+
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Log.i("INFO", imageResults.toString());
