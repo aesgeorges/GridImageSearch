@@ -109,6 +109,7 @@ public class SearchActivity extends ActionBarActivity {
                 JSONArray imageResultsJson = null;
                 try {
                     imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
+                    Toast.makeText(getApplicationContext(), "Found Ya!", Toast.LENGTH_SHORT).show();
                     imageResults.clear(); //clear the existig images in case there is a new search
                     // When you make to the adapter, it does modify the underliying data auto
                     aImageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
@@ -121,12 +122,15 @@ public class SearchActivity extends ActionBarActivity {
         });
     }
 
+    int start = 8;
+
     public void customLoadMoreDataFromApi(final boolean isPage) {
         // This method probably sends out a network request and appends new data items to your adapter.
         // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
         // Deserialize API response and then construct new objects to append to the adapter
         String query = etQuery.getText().toString();
-        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="+ query +"&rsz=8";
+
+        String url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="+ query +"&rsz=8" + "&start=" + start ;
         AsyncHttpClient client = new AsyncHttpClient();
         client.get(url, new JsonHttpResponseHandler() {
 
@@ -136,9 +140,9 @@ public class SearchActivity extends ActionBarActivity {
                 JSONArray imageResultsJson = null;
                 try {
                     if (isPage) {
-                        Toast.makeText(getApplicationContext(), "Found Ya!", Toast.LENGTH_SHORT).show();
                         imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
                         aImageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
+                        start = start + 8;
                     }
                     JSONObject cursor = response.getJSONObject("responseData").getJSONObject("cursor");
                     int currentPage = cursor.getInt("currentPageIndex");
