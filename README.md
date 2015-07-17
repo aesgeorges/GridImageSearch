@@ -3,13 +3,13 @@ Second week project
 
 ✓ User can enter a search query that will display a grid of image results from the Google Image API.
 
-[in progress] User can click on "settings" which allows selection of advanced search options to filter results
+✓ [on Click, settings activity will launch, but is not configured yet] User can click on "settings" which allows selection of advanced search options to filter results
 
 [not started yet] User can configure advanced search filters such as:
 
 [not started yet] Size (small, medium, large, extra-large)
 
-[not started yet] Color filter (black, blue, brown, gray, green, etc...)
+[in progress] Color filter (black, blue, brown, gray, green, etc...)
 
 [not started yet] Type (faces, photo, clip art, line art)
 
