@@ -21,3 +21,7 @@ Second week project
 
 ✓ User can scroll down “infinitely” to continue loading more image results (up to 8 pages)
 
+GIF WALKTHROUGH
+
+<img src="cellphone.gif" alt="Gif Walkthrough" />
+
